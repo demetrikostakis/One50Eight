@@ -19,6 +19,9 @@ class Sign_In_TableViewController: UITableViewController {
     @IBOutlet weak var signUpButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor.clearColor()
+        self.navigationItem.title = "Conveniently"
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -36,11 +39,14 @@ class Sign_In_TableViewController: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 4
+        return 2
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        if(section == 1){
+            return 2
+        }
         return 1
     }
     

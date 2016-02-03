@@ -32,13 +32,6 @@ class Schedule_Editor_Cell: UITableViewCell, MultiSelectSegmentedControlDelegate
     func multiSelect(multiSelecSegmendedControl: MultiSelectSegmentedControl!, didChangeValue value: Bool, atIndex index: UInt) {
         if(value == true){
             
-            /*
-            tableView.beginUpdates()
-            array = multiSelecSegmendedControl.selectedSegmentTitles
-            let indexPaths = [NSIndexPath(forRow: array.count-1, inSection: 1)]
-            self.tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: UITableViewRowAnimation.Automatic)
-
-            */
             tableViewController.numberOfDaysSelected = multiSelecSegmendedControl.selectedSegmentTitles as! [String]
             self.tableView.reloadData()
             print(multiSelecSegmendedControl.selectedSegmentTitles)

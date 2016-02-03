@@ -13,6 +13,8 @@ class Day_Editor_Cell: UITableViewCell {
     @IBOutlet weak var startTime: UIDatePicker!
     @IBOutlet weak var endTime: UIDatePicker!
     @IBOutlet weak var dayLabel: UILabel!
+    @IBOutlet weak var startLabel: UILabel!
+    @IBOutlet weak var endLabel: UILabel!
     
     var textString: String!
   

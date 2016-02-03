@@ -20,8 +20,10 @@
 		C40E91611C614EEC00BFCA9D /* Service_Selection_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E91601C614EEC00BFCA9D /* Service_Selection_Cell.swift */; };
 		C40E91631C614EFE00BFCA9D /* Schedule_Editor_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E91621C614EFE00BFCA9D /* Schedule_Editor_Cell.swift */; };
 		C40E91651C614F2C00BFCA9D /* Day_Editor_Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E91641C614F2C00BFCA9D /* Day_Editor_Cell.swift */; };
-		C40E91751C61534D00BFCA9D /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = C40E91741C61534D00BFCA9D /* MultiSelectSegmentedControl.m */; };
 		C40E917C1C61781A00BFCA9D /* setDistanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E917B1C61781900BFCA9D /* setDistanceCell.swift */; };
+		C40E917E1C61929600BFCA9D /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C40E917D1C61929600BFCA9D /* iAd.framework */; };
+		C440D79B1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C440D79A1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg */; };
+		C4A32A4D1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = C4A32A4C1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m */; };
 		C4FCFE4F1C6009DB00A81EEC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FCFE4E1C6009DB00A81EEC /* AppDelegate.swift */; };
 		C4FCFE541C6009DB00A81EEC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4FCFE521C6009DB00A81EEC /* Main.storyboard */; };
 		C4FCFE571C6009DB00A81EEC /* Conveniently.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C4FCFE551C6009DB00A81EEC /* Conveniently.xcdatamodeld */; };
@@ -63,9 +65,11 @@
 		C40E91621C614EFE00BFCA9D /* Schedule_Editor_Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule_Editor_Cell.swift; sourceTree = "<group>"; };
 		C40E91641C614F2C00BFCA9D /* Day_Editor_Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day_Editor_Cell.swift; sourceTree = "<group>"; };
 		C40E91721C61534D00BFCA9D /* Conveniently-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Conveniently-Bridging-Header.h"; sourceTree = "<group>"; };
-		C40E91731C61534D00BFCA9D /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiSelectSegmentedControl.h; path = "../../../../Desktop/MultiSelectSegmentedControl-master/MultiSelectSegmentedControl.h"; sourceTree = "<group>"; };
-		C40E91741C61534D00BFCA9D /* MultiSelectSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MultiSelectSegmentedControl.m; path = "../../../../Desktop/MultiSelectSegmentedControl-master/MultiSelectSegmentedControl.m"; sourceTree = "<group>"; };
 		C40E917B1C61781900BFCA9D /* setDistanceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = setDistanceCell.swift; sourceTree = "<group>"; };
+		C40E917D1C61929600BFCA9D /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		C440D79A1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Conveniently_Background_iPhone6.jpg; path = "../../../../Library/Mobile Documents/4R6749AYRE~com~pixelmatorteam~pixelmator/Documents/Conveniently_Background_iPhone6.jpg"; sourceTree = "<group>"; };
+		C4A32A4B1C61A7BE0097B6DE /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiSelectSegmentedControl.h; path = "MultiSelectSegmentedControl-master 8.09.12 PM/MultiSelectSegmentedControl.h"; sourceTree = SOURCE_ROOT; };
+		C4A32A4C1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MultiSelectSegmentedControl.m; path = "MultiSelectSegmentedControl-master 8.09.12 PM/MultiSelectSegmentedControl.m"; sourceTree = SOURCE_ROOT; };
 		C4FCFE4B1C6009DB00A81EEC /* Conveniently.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Conveniently.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4FCFE4E1C6009DB00A81EEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C4FCFE531C6009DB00A81EEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -86,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C40E917E1C61929600BFCA9D /* iAd.framework in Frameworks */,
 				C40E91481C60359D00BFCA9D /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,8 +156,6 @@
 		C40E91761C61618B00BFCA9D /* MultiSelectSegmentedControl */ = {
 			isa = PBXGroup;
 			children = (
-				C40E91731C61534D00BFCA9D /* MultiSelectSegmentedControl.h */,
-				C40E91741C61534D00BFCA9D /* MultiSelectSegmentedControl.m */,
 				C40E91721C61534D00BFCA9D /* Conveniently-Bridging-Header.h */,
 			);
 			name = MultiSelectSegmentedControl;
@@ -161,7 +164,10 @@
 		C40E91771C6161AD00BFCA9D /* Misceleneous */ = {
 			isa = PBXGroup;
 			children = (
+				C4A32A4B1C61A7BE0097B6DE /* MultiSelectSegmentedControl.h */,
+				C4A32A4C1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m */,
 				C40E914B1C60365B00BFCA9D /* BackgroundGradient.swift */,
+				C440D79A1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg */,
 				C4FCFE581C6009DB00A81EEC /* Assets.xcassets */,
 				C4FCFE551C6009DB00A81EEC /* Conveniently.xcdatamodeld */,
 				C4FCFE5D1C6009DB00A81EEC /* Info.plist */,
@@ -205,6 +211,7 @@
 		C4FCFE421C6009DB00A81EEC = {
 			isa = PBXGroup;
 			children = (
+				C40E917D1C61929600BFCA9D /* iAd.framework */,
 				C40E91471C60359D00BFCA9D /* QuartzCore.framework */,
 				C4FCFE4D1C6009DB00A81EEC /* Conveniently */,
 				C4FCFE651C6009DB00A81EEC /* ConvenientlyTests */,
@@ -362,6 +369,7 @@
 				C4FCFE5C1C6009DB00A81EEC /* LaunchScreen.storyboard in Resources */,
 				C4FCFE591C6009DB00A81EEC /* Assets.xcassets in Resources */,
 				C4FCFE541C6009DB00A81EEC /* Main.storyboard in Resources */,
+				C440D79B1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4A32A4D1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m in Sources */,
 				C40E91551C613EB300BFCA9D /* Terms_And_Conditions_Page.swift in Sources */,
 				C40E91591C613F1A00BFCA9D /* Input_Provider_Profile.swift in Sources */,
 				C40E91421C602E7500BFCA9D /* Provider_Profile_Page.swift in Sources */,
@@ -398,7 +407,6 @@
 				C40E915B1C613F3200BFCA9D /* Input_Client_Profile.swift in Sources */,
 				C4FCFE4F1C6009DB00A81EEC /* AppDelegate.swift in Sources */,
 				C40E91631C614EFE00BFCA9D /* Schedule_Editor_Cell.swift in Sources */,
-				C40E91751C61534D00BFCA9D /* MultiSelectSegmentedControl.m in Sources */,
 				C40E914E1C6131B500BFCA9D /* ClientProfileTabController.swift in Sources */,
 				C40E910E1C600B0200BFCA9D /* Sign_In_TableViewController.swift in Sources */,
 				C40E91651C614F2C00BFCA9D /* Day_Editor_Cell.swift in Sources */,

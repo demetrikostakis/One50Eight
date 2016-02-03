@@ -15,6 +15,9 @@ class Input_Provider_Profile: UITableViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
+        self.navigationItem.title = "Create Profile"
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
