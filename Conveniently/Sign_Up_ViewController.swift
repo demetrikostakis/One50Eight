@@ -9,7 +9,7 @@
 import UIKit
 
 
-class Sign_Up_ViewController: UITableViewController {
+class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate {
     
     
     
@@ -17,40 +17,120 @@ class Sign_Up_ViewController: UITableViewController {
     @IBOutlet weak var enterUsernameField: UITextField!
     @IBOutlet weak var enterPasswordField: UITextField!
     @IBOutlet weak var enterEmailField: UITextField!
+    @IBOutlet weak var confirmEmail: UITextField!
     @IBOutlet weak var addressField: UITextField!
-    @IBOutlet weak var nextButton: UIButton!
+    @IBOutlet weak var zipCodeField: UITextField!
 
+    let states = ["Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming"]
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        //self.view.backgroundColor = UIColor.clearColor()
         self.navigationItem.title = "Sign Up"
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        let nextButton: UIBarButtonItem = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: "nextPage")
+        
+        self.navigationItem.rightBarButtonItem = nextButton
+        
+        /*
+        //dismiss keyboard on click
+        let dismissKeyboardRecognizer: UIGestureRecognizer = UIGestureRecognizer(target: self, action: Selector("dismissKeyboard()"))
+        self.tableView.addGestureRecognizer(dismissKeyboardRecognizer)
+        */
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //call this function when a tap outside of keyboard is recognized
+    /*
+    func dismissKeyboard(){
+        self.enterUsernameField.resignFirstResponder()
+        self.enterPasswordField.resignFirstResponder()
+        self.enterEmailField.resignFirstResponder()
+        self.zipCodeField.resignFirstResponder()
+        self.confirmEmail.resignFirstResponder()
+        self.addressField.resignFirstResponder()
+    }
+
+    */
+    
+    //Makes sure keyboard dismisses on return key
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 6
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
 
-        return 1
+        return 8
     }
     
-    @IBAction func nextPage(){
+    func nextPage(){
         if userTypePicker!.selectedSegmentIndex == 0{
             performSegueWithIdentifier("setUpProvider", sender: self)
         }else{
@@ -59,51 +139,19 @@ class Sign_Up_ViewController: UITableViewController {
     }
 
 
-    /*
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
+    //PickerView Implementation
     
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return states[row]
+    }
+    
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return states.count
+    }
+    
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
     
 
     

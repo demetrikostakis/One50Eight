@@ -10,10 +10,17 @@ import UIKit
 
 class ProviderTabBarController: UITabBarController {
 
+    
+    @IBOutlet var openDrawer: UIBarButtonItem!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.openDrawer.target = self.revealViewController()
+        self.openDrawer.action = Selector("revealToggle:")
         // Do any additional setup after loading the view.
+        
+        self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
     }
 
     override func didReceiveMemoryWarning() {

@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        self.window?.backgroundColor = UIColor(patternImage: UIImage(named: "Conveniently_Background_iPhone6.jpg")!)
+        //self.window?.backgroundColor = UIColor(patternImage: UIImage(named: "Main_Background_Image.jpg")!)
         
         // Override point for customization after application launch.
         return true

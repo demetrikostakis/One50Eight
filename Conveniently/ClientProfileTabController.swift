@@ -10,9 +10,14 @@ import UIKit
 
 class ClientProfileTabController: UITabBarController {
 
+    @IBOutlet weak var openDrawer: UIBarButtonItem!
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.openDrawer.target = self.revealViewController()
+        self.openDrawer.action = Selector("revealToggle:")
+        
+        self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         // Do any additional setup after loading the view.
     }
 

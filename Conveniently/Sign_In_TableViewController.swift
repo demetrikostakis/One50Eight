@@ -17,12 +17,13 @@ class Sign_In_TableViewController: UITableViewController {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var signInButton: UIButton!
     @IBOutlet weak var signUpButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor.clearColor()
-        self.navigationItem.title = "Conveniently"
-
+        //self.view.backgroundColor = UIColor.clearColor()
+        self.navigationItem.title = "Welcome!"
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
@@ -45,9 +46,11 @@ class Sign_In_TableViewController: UITableViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if(section == 1){
-            return 2
+            return 3
         }
         return 1
+    }
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
     }
     
     @IBAction func signIn(){
@@ -58,6 +61,7 @@ class Sign_In_TableViewController: UITableViewController {
         }else{
             performSegueWithIdentifier("signInClient", sender: self)
         }
+
     }
     
     // MARK: - Navigation

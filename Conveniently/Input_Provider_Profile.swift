@@ -8,15 +8,21 @@
 
 import UIKit
 
-class Input_Provider_Profile: UITableViewController{
+class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate{
     
     var numberOfDaysSelected = [String]()
 
+    var distances = ["1","2","3","4","5","10","20"]
+    
+    @IBOutlet weak var horizontalScrollView: UIScrollView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        //self.view.backgroundColor = UIColor.clearColor()
         self.navigationItem.title = "Create Profile"
+        
+        
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -43,6 +49,15 @@ class Input_Provider_Profile: UITableViewController{
             return (numberOfDaysSelected.count + 1)
         }
         return 1
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if(indexPath.section == 0 || (indexPath.section == 1 && indexPath.row == 0)){
+            return 80
+
+        }
+        return 138
+        
     }
 
     
@@ -77,30 +92,27 @@ class Input_Provider_Profile: UITableViewController{
         }
     }
     
-    var selectedIndexPath: NSIndexPath?
+   
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath == selectedIndexPath{
-            return 150
-        }else{
-            return 44
-        }
+      
+    
+    //PickerViewDataSource Implimentation
+    
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return distances[row]
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let indexPaths: Array<NSIndexPath>=[indexPath]
-        if(indexPath.section == 1){
-            selectedIndexPath = indexPath
-        }
-        tableView.reloadRowsAtIndexPaths(indexPaths, withRowAnimation: UITableViewRowAnimation.Automatic)
-        
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return distances.count
     }
     
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
     
+    //ScrollViewDelegate functions
     
-    
-    
+
 
     /*
     // Override to support conditional editing of the table view.

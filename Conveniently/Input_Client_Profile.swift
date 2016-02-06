@@ -8,11 +8,21 @@
 
 import UIKit
 
-class Input_Client_Profile: UITableViewController {
+class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
+    @IBOutlet weak var yardSizePicker: UIPickerView!
+    @IBOutlet weak var drivewaySizePicker: UIPickerView!
+    @IBOutlet weak var yardSizeLabel: UILabel!
+    @IBOutlet weak var drivewaySizeLabel: UILabel!
+    
+    var yardSizes = ["0.1","0.5","1","1.5","2","2.5","3+"]
+    var drivewaySizes = ["10 x 10","20 x 10","20 x 20","30 x 20","30 x 30","+30 x +30"]
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        yardSizeLabel.text = "0.1 Acres"
+        drivewaySizeLabel.text = "10 x 10 Sq Ft"
+        //self.view.backgroundColor = UIColor.clearColor()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -29,14 +39,47 @@ class Input_Client_Profile: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 2
+    }
+    
+    //
+    //pickerview implimentation
+    //
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if pickerView == drivewaySizePicker{
+            drivewaySizeLabel.text = drivewaySizes[row] + " Sq Ft"
+            return
+        }else{
+            yardSizeLabel.text = yardSizes[row] + " Acres"
+            return
+        }
+        
+
+    }
+    
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if pickerView == drivewaySizePicker{
+            return drivewaySizes[row]
+        }
+        return yardSizes[row]
     }
 
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        if pickerView == drivewaySizePicker{
+            return drivewaySizes.count
+        }
+        return yardSizes.count
+    }
+    
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
     /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
