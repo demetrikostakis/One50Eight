@@ -34,7 +34,7 @@ class Schedule_Editor_Cell: UITableViewCell, MultiSelectSegmentedControlDelegate
             
             tableViewController.numberOfDaysSelected = multiSelecSegmendedControl.selectedSegmentTitles as! [String]
             self.tableView.reloadData()
-            print(multiSelecSegmendedControl.selectedSegmentTitles)
+            //print(multiSelecSegmendedControl.selectedSegmentTitles)
             
         }else{
             tableViewController.numberOfDaysSelected = multiSelecSegmendedControl.selectedSegmentTitles as! [String]

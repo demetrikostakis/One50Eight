@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import AVFoundation
+import CloudKit
 
 
 
@@ -16,15 +17,166 @@ import AVFoundation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    
+    var loginStatus: Bool?
+    var recordID: CKRecordID?
+    var type: String?
+    
+    var user: CKRecord?
+    var userType: CKRecord?//either a client or provider CKRecord
+    var schedule: [CKRecord]?
+    var requests: [CKRecord]?
+    var reviews: [CKRecord]?
+    
+    
+    
 
-
+    let container: CKContainer = CKContainer.defaultContainer()
+    let publicDB: CKDatabase = CKContainer.defaultContainer().publicCloudDatabase
+    let privateDB: CKDatabase = CKContainer.defaultContainer().privateCloudDatabase
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        //self.window?.backgroundColor = UIColor(patternImage: UIImage(named: "Main_Background_Image.jpg")!)
         
-        // Override point for customization after application launch.
+        
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        //searches CoreData for users to check for logged in user
+        let managedContext = self.managedObjectContext
+        let fetchRequest: NSFetchRequest = NSFetchRequest(entityName: "User")
+        var users: [NSManagedObject] = []
+        do {
+            let results =
+            try managedContext.executeFetchRequest(fetchRequest)
+            users = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+        for _user in users{
+            loginStatus = _user.valueForKey("loginStatus") as? Bool
+            let idString = _user.valueForKey("recordID") as? String
+            
+            recordID = CKRecordID(recordName: idString!)
+            
+        }
+        
+        //checks to make sure there is a loginStatus attribute
+        if loginStatus != nil{
+            //if loginStatus is false then we need to direct the user to the login page
+            if loginStatus == false{
+                
+                let initialViewController = storyboard.instantiateViewControllerWithIdentifier("login") as! UINavigationController
+                
+                self.window?.rootViewController = initialViewController
+                self.window?.makeKeyAndVisible()
+                
+            }else{//this is when there is a user logged into this device
+                
+                //downloads User, provider/client, schedule, requests, and review records
+                
+                //Sets inital view controller to the correct profile page
+                let initialViewController = storyboard.instantiateViewControllerWithIdentifier("client") as! SWRevealViewController
+                
+                self.window?.rootViewController = initialViewController
+                self.window?.makeKeyAndVisible()
+                
+                publicDB.fetchRecordWithID(recordID!, completionHandler: {
+                    record, error in
+                    if error != nil{
+                        
+                    }else{
+                        self.user = record
+                        self.type = record?.objectForKey("type") as? String
+                    }
+                })
+                //querys for the provider or client record for this user
+                let userReference = CKReference(recordID: self.recordID!, action: CKReferenceAction.DeleteSelf)
+                
+                let userTypePredicate = NSPredicate(format: "following CONTAINS %@",
+                    userReference)
+                
+                let query = CKQuery(recordType: self.type!, predicate: userTypePredicate)
+                publicDB.performQuery(query, inZoneWithID: nil, completionHandler: {
+                    records, error in
+                    if error != nil{
+                        
+                    }else{
+                        for record in records!{
+                            self.userType = record
+                        }
+                    }
+                })
+                //query for all the requests related to this account
+                let requestReference = CKReference(record: self.userType!, action: CKReferenceAction.DeleteSelf)
+                
+                let requestPredicate = NSPredicate(format: "following CONTAINS %@",
+                    requestReference)
+                
+                let requestQuery = CKQuery(recordType: "Request", predicate: requestPredicate)
+                
+                publicDB.performQuery(requestQuery, inZoneWithID: nil, completionHandler: {
+                    records, error in
+                    if error != nil{
+                        
+                    }else{
+                        self.requests = records
+                    }
+                })
+                
+                if type == "Provider"{
+                    
+                    //querys for the provider schedule
+                    let scheduleReference = CKReference(record: self.userType!, action: CKReferenceAction.DeleteSelf)
+                    
+                    let schedulePredicate = NSPredicate(format: "following CONTAINS %@",
+                        scheduleReference)
+                    
+                    let scheduleQuery = CKQuery(recordType: "Request", predicate: schedulePredicate)
+                    
+                    publicDB.performQuery(scheduleQuery, inZoneWithID: nil, completionHandler: {
+                        records, error in
+                        if error != nil{
+                            
+                        }else{
+                            self.schedule = records
+                        }
+                    })
+                    //querys for the providers reviews
+                    
+                    let reviewReference = CKReference(record: self.userType!, action: CKReferenceAction.DeleteSelf)
+                    
+                    let reviewPredicate = NSPredicate(format: "following CONTAINS %@",
+                        reviewReference)
+                    
+                    let reviewQuery = CKQuery(recordType: "Review", predicate: reviewPredicate)
+                    
+                    publicDB.performQuery(reviewQuery, inZoneWithID: nil, completionHandler: {
+                        records, error in
+                        if error != nil{
+                            
+                        }else{
+                            self.reviews = records
+                        }
+                    })
+
+                }
+                
+            }
+        }
+        //When there is no loginStatus attribute we assume the application is being opened for the first time thus we direct the user to the login page
+        else{
+            let initialViewController = storyboard.instantiateViewControllerWithIdentifier("login") as! UINavigationController
+            
+            self.window?.rootViewController = initialViewController
+            self.window?.makeKeyAndVisible()
+        }
+        
         return true
     }
 
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.

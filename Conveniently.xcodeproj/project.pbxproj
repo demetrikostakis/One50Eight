@@ -39,6 +39,7 @@
 		C440D79B1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C440D79A1C6293B100D0FC6D /* Conveniently_Background_iPhone6.jpg */; };
 		C4610DD81C6449C500C4FF52 /* ClientProfileMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4610DD71C6449C500C4FF52 /* ClientProfileMain.swift */; };
 		C4A32A4D1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = C4A32A4C1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m */; };
+		C4A577D11C6718410068E9C5 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4A577D01C6718400068E9C5 /* CoreLocation.framework */; };
 		C4FCFE4F1C6009DB00A81EEC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FCFE4E1C6009DB00A81EEC /* AppDelegate.swift */; };
 		C4FCFE541C6009DB00A81EEC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4FCFE521C6009DB00A81EEC /* Main.storyboard */; };
 		C4FCFE571C6009DB00A81EEC /* Conveniently.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C4FCFE551C6009DB00A81EEC /* Conveniently.xcdatamodeld */; };
@@ -102,6 +103,7 @@
 		C4610DD71C6449C500C4FF52 /* ClientProfileMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientProfileMain.swift; sourceTree = "<group>"; };
 		C4A32A4B1C61A7BE0097B6DE /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiSelectSegmentedControl.h; path = "MultiSelectSegmentedControl-master 8.09.12 PM/MultiSelectSegmentedControl.h"; sourceTree = SOURCE_ROOT; };
 		C4A32A4C1C61A7BE0097B6DE /* MultiSelectSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MultiSelectSegmentedControl.m; path = "MultiSelectSegmentedControl-master 8.09.12 PM/MultiSelectSegmentedControl.m"; sourceTree = SOURCE_ROOT; };
+		C4A577D01C6718400068E9C5 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		C4FCFE4B1C6009DB00A81EEC /* Conveniently.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Conveniently.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4FCFE4E1C6009DB00A81EEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C4FCFE531C6009DB00A81EEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4A577D11C6718410068E9C5 /* CoreLocation.framework in Frameworks */,
 				C43C59171C6673BA00DF1177 /* CloudKit.framework in Frameworks */,
 				C43C59121C66501800DF1177 /* libsqlite3.0.tbd in Frameworks */,
 				C43C59101C65796600DF1177 /* MessageUI.framework in Frameworks */,
@@ -158,6 +161,7 @@
 		C40E91521C6131DE00BFCA9D /* Provider */ = {
 			isa = PBXGroup;
 			children = (
+				C43C59201C66A38C00DF1177 /* ProviderPayment.swift */,
 				C40E91531C61324100BFCA9D /* Profile */,
 			);
 			name = Provider;
@@ -198,6 +202,7 @@
 		C40E91771C6161AD00BFCA9D /* Misceleneous */ = {
 			isa = PBXGroup;
 			children = (
+				C43C59131C66569200DF1177 /* standardCell.swift */,
 				C43C59221C66D65200DF1177 /* RatingControl.swift */,
 				C43C590A1C65583A00DF1177 /* SWRevealViewController */,
 				C40E91761C61618B00BFCA9D /* MultiSelectSegmentedControl */,
@@ -229,7 +234,6 @@
 				C40E910D1C600B0200BFCA9D /* Sign_Up_ViewController.swift */,
 				C4610DD61C6437A400C4FF52 /* Client Sign Up */,
 				C40E917A1C616B8000BFCA9D /* Provider Sign Up */,
-				C43C59131C66569200DF1177 /* standardCell.swift */,
 			);
 			name = "Sign Up and Sign In";
 			sourceTree = "<group>";
@@ -266,6 +270,7 @@
 		C4FCFE421C6009DB00A81EEC = {
 			isa = PBXGroup;
 			children = (
+				C4A577D01C6718400068E9C5 /* CoreLocation.framework */,
 				C43C59161C6673BA00DF1177 /* CloudKit.framework */,
 				C43C59111C66501800DF1177 /* libsqlite3.0.tbd */,
 				C43C590F1C65796600DF1177 /* MessageUI.framework */,
@@ -291,6 +296,7 @@
 		C4FCFE4D1C6009DB00A81EEC /* Conveniently */ = {
 			isa = PBXGroup;
 			children = (
+				C43C591E1C66883400DF1177 /* Request.swift */,
 				C43C59151C6673B000DF1177 /* Conveniently.entitlements */,
 				C4FCFE4E1C6009DB00A81EEC /* AppDelegate.swift */,
 				C40E91791C6161EF00BFCA9D /* Sign Up and Sign In */,
@@ -298,8 +304,6 @@
 				C40E91511C6131D400BFCA9D /* Client */,
 				C40E91781C6161D100BFCA9D /* Storyboard */,
 				C40E91771C6161AD00BFCA9D /* Misceleneous */,
-				C43C591E1C66883400DF1177 /* Request.swift */,
-				C43C59201C66A38C00DF1177 /* ProviderPayment.swift */,
 			);
 			path = Conveniently;
 			sourceTree = "<group>";

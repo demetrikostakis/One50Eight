@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CloudKit
 
 
 class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate {
@@ -20,6 +21,10 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
     @IBOutlet weak var confirmEmail: UITextField!
     @IBOutlet weak var addressField: UITextField!
     @IBOutlet weak var zipCodeField: UITextField!
+    
+    var userRecord: CKRecord?
+    var clientRecord: CKRecord?
+    var providerRecord: CKRecord?
 
     let states = ["Alabama",
         "Alaska",
@@ -83,13 +88,7 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
         let nextButton: UIBarButtonItem = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: "nextPage")
         
         self.navigationItem.rightBarButtonItem = nextButton
-        
-        /*
-        //dismiss keyboard on click
-        let dismissKeyboardRecognizer: UIGestureRecognizer = UIGestureRecognizer(target: self, action: Selector("dismissKeyboard()"))
-        self.tableView.addGestureRecognizer(dismissKeyboardRecognizer)
-        */
-        
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -98,17 +97,6 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
     }
     
     //call this function when a tap outside of keyboard is recognized
-    /*
-    func dismissKeyboard(){
-        self.enterUsernameField.resignFirstResponder()
-        self.enterPasswordField.resignFirstResponder()
-        self.enterEmailField.resignFirstResponder()
-        self.zipCodeField.resignFirstResponder()
-        self.confirmEmail.resignFirstResponder()
-        self.addressField.resignFirstResponder()
-    }
-
-    */
     
     //Makes sure keyboard dismisses on return key
     
@@ -131,10 +119,42 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
     }
     
     func nextPage(){
+        
+        //add attributes to the record
+        userRecord = CKRecord(recordType: "User")
+        userRecord?.setObject(enterUsernameField.text, forKey: "username")
+        userRecord?.setObject(enterPasswordField.text, forKey: "password")
+        userRecord?.setObject(confirmEmail.text, forKey: "email")
+        
+        print(userRecord)
+        
+        let address = zipCodeField.text!
+        
+        //creates location object from address
+        let geocoder: CLGeocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address, completionHandler: {placemarks,error in
+            if placemarks?.count > 0{
+                
+                let placemark = placemarks?.first
+                let location = placemark?.location
+                self.userRecord?.setObject(location, forKey: "address")
+                print("WE DID IT")
+            }
+        })
+        
+        
         if userTypePicker!.selectedSegmentIndex == 0{
+            
+            providerRecord = CKRecord(recordType: "Provider")
+            
             performSegueWithIdentifier("setUpProvider", sender: self)
+            
         }else{
+            
+            clientRecord = CKRecord(recordType: "Client")
+            
             performSegueWithIdentifier("setUpClient", sender: self)
+            
         }
     }
 
@@ -159,8 +179,18 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        //Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "setUpClient"{
+            
+            let signupVC = segue.destinationViewController as! Input_Client_Profile
+            signupVC.userRecord = self.userRecord
+            
+        }else{
+            
+            let signupVC = segue.destinationViewController as! Input_Provider_Profile
+            signupVC.userRecord = self.userRecord
+            
+        }
+        
         
         
     }

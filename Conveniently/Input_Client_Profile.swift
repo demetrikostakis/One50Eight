@@ -7,8 +7,13 @@
 //
 
 import UIKit
+import CloudKit
 
 class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+    
+    var clientRecord:CKRecord?
+    var userRecord: CKRecord?
+    
 
     @IBOutlet weak var yardSizePicker: UIPickerView!
     @IBOutlet weak var drivewaySizePicker: UIPickerView!

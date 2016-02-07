@@ -42,6 +42,13 @@ class Day_Editor_Cell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSo
         
         return endTimes[row]
     }
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if pickerView == startTime{
+            startLabel.text = startTimes[row]
+        }else{
+            endLabel.text = endTimes[row]
+        }
+    }
     
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if(pickerView == startTime){

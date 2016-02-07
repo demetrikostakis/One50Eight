@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CloudKit
 
 class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate{
     
@@ -14,23 +15,40 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
 
     var distances = ["1","2","3","4","5","10","20"]
     
-    @IBOutlet weak var horizontalScrollView: UIScrollView!
+    //all records that need to be saved
+    var providerRecord: CKRecord!
+    var userRecord: CKRecord?
+    var scheduleRecords: [CKRecord] = []
+    
+    //All inputs from the tableview
+    var services:[String] = []
+    var weeklySchedule: [String] = []
+    var startHours:[String] = []
+    var endHours:[String] = []
+    var maxDistance: String?
+    
+    //All cells in tableview
+    var serviceSelector: Service_Selection_Cell?
+    var scheduleEditor: Schedule_Editor_Cell?
+    var dayEditor: Day_Editor_Cell?
+    var setDistance: setDistanceCell?
     
     var nextButton: UIBarButtonItem!
+    
+    //All Interface Builder Outlets
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //self.view.backgroundColor = UIColor.clearColor()
+        //set title of view
         self.navigationItem.title = "Setup"
+        providerRecord = CKRecord(recordType: "Provider")
+
         
+        //set nextbutton to move to next screen
         nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("nextPage"))
         self.navigationItem.rightBarButtonItem = nextButton
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        //self.navigationItem.rightBarButtonItem = self.editButtonItem()
+      
     }
 
     override func didReceiveMemoryWarning() {
@@ -38,13 +56,68 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(animated: Bool) {
+        scheduleRecords = []
+        startHours = []
+        endHours = []
+    }
+    
     
     func nextPage(){
+        
+        services = serviceSelector?.serviceSelector.selectedSegmentTitles as! [String]
+        weeklySchedule = scheduleEditor!.daySelector.selectedSegmentTitles as! [String]
+        
+        var count = 1
+        for _ in weeklySchedule{
+            
+            let cell = self.tableView(self.tableView, cellForRowAtIndexPath: NSIndexPath(forItem: count, inSection: 1)) as! Day_Editor_Cell
+            
+            startHours.append(cell.startLabel.text!)
+            endHours.append(cell.endLabel.text!)
+            count = count + 1
+        }
+        print(startHours)
+        print(endHours)
+        
+        maxDistance = setDistance?.distanceLabel.text
+        
+        //adds values to the provider record
+        providerRecord?.setObject(services, forKey: "services")
+        providerRecord?.setObject(maxDistance, forKey: "maxDistance")
+        let userReference = CKReference(record: userRecord!, action: CKReferenceAction.DeleteSelf)
+        providerRecord?.setObject(userReference, forKey: "user")
+        
+        //creates the array of schedule records
+        count = 0
+        for day in weeklySchedule{
+            
+            //initalizes record
+            let record = CKRecord(recordType: "Schedule")
+            record.setObject("startTime", forKey: startHours[count])
+            record.setObject("endTime", forKey: endHours[count])
+            record.setObject(day, forKey: "day")
+            
+            //sets reference back to provider
+            let providerReference = CKReference(record: providerRecord!, action: CKReferenceAction.DeleteSelf)
+            record.setObject(providerReference, forKey: "provider")
+            
+            //adds record to array of schedule records
+            scheduleRecords.append(record)
+        }
+        
+        print("This is the array of schedule Records/n")
+        print(scheduleRecords)
+        print("This is the provider record/,")
+        print(providerRecord)
+        
         performSegueWithIdentifier("next", sender: self)
     }
-
+    
+    //
     // MARK: - Table view data source
-
+    //
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 3
@@ -72,26 +145,26 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
         
         switch indexPath.section{
         case 0:
-            let serviceSelector = tableView.dequeueReusableCellWithIdentifier("typeOfService", forIndexPath: indexPath) as! Service_Selection_Cell
-            return serviceSelector
+            serviceSelector = tableView.dequeueReusableCellWithIdentifier("typeOfService", forIndexPath: indexPath) as? Service_Selection_Cell
+            return serviceSelector!
         case 1:
             if(indexPath.row)==0{
                 
-                let scheduleEditor = tableView.dequeueReusableCellWithIdentifier("addDays", forIndexPath: indexPath) as! Schedule_Editor_Cell
-                scheduleEditor.tableView = self.tableView
-                scheduleEditor.tableViewController = self
-                return scheduleEditor
+                scheduleEditor = tableView.dequeueReusableCellWithIdentifier("addDays", forIndexPath: indexPath) as? Schedule_Editor_Cell
+                scheduleEditor!.tableView = self.tableView
+                scheduleEditor!.tableViewController = self
+                return scheduleEditor!
                 
             }else{
-                let dayEditor = tableView.dequeueReusableCellWithIdentifier("editDaySchedule", forIndexPath: indexPath) as! Day_Editor_Cell
+                dayEditor = tableView.dequeueReusableCellWithIdentifier("editDaySchedule", forIndexPath: indexPath) as? Day_Editor_Cell
                 
-                dayEditor.dayLabel.text = self.numberOfDaysSelected[indexPath.row-1]
+                dayEditor!.dayLabel.text = self.numberOfDaysSelected[indexPath.row-1]
                 
-                return dayEditor
+                return dayEditor!
             }
         case 2:
-            let maxDistance = tableView.dequeueReusableCellWithIdentifier("distanceCell", forIndexPath: indexPath) as! setDistanceCell
-            return maxDistance
+            setDistance = tableView.dequeueReusableCellWithIdentifier("distanceCell", forIndexPath: indexPath) as? setDistanceCell
+            return setDistance!
             
         default:
             let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
@@ -102,9 +175,9 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
    
     
       
-    
-    //PickerViewDataSource Implimentation
-    
+    //
+    // MARK: - PickerViewDataSource Implimentation
+    //
     func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return distances[row]
     }
@@ -117,53 +190,15 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
         return 1
     }
     
-    //ScrollViewDelegate functions
-    
-
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
+    //
     // MARK: - Navigation
-
+    //
+    
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        
     }
-    */
+
 
 }
