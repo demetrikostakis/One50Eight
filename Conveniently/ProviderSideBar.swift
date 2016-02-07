@@ -49,6 +49,9 @@ class ProviderSideBar: UITableViewController, MFMailComposeViewControllerDelegat
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if(indexPath.row == 0){
+            performSegueWithIdentifier("editPrices", sender: self)
+        }
         if(indexPath.row == 2){
             UIApplication.sharedApplication().openURL(NSURL(string:"http://one50eight.com")!)
         }else if(indexPath.row == 1){

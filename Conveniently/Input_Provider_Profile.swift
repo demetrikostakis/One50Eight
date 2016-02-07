@@ -16,13 +16,15 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     
     @IBOutlet weak var horizontalScrollView: UIScrollView!
     
+    var nextButton: UIBarButtonItem!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //self.view.backgroundColor = UIColor.clearColor()
-        self.navigationItem.title = "Create Profile"
+        self.navigationItem.title = "Setup"
         
-        
+        nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("nextPage"))
+        self.navigationItem.rightBarButtonItem = nextButton
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -34,6 +36,11 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    func nextPage(){
+        performSegueWithIdentifier("next", sender: self)
     }
 
     // MARK: - Table view data source

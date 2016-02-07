@@ -1,19 +1,27 @@
 //
-//  RecentJobRequests.swift
+//  ProviderPayment.swift
 //  Conveniently
 //
-//  Created by Demetri Kostakis on 2/5/16.
+//  Created by Demetri Kostakis on 2/6/16.
 //  Copyright © 2016 One50Eight. All rights reserved.
 //
 
 import UIKit
 
-class RecentJobRequests: UITableViewController {
+class ProviderPayment: UITableViewController {
 
+    @IBOutlet weak var finishButton: UIButton!
+    var yardSizes = ["0.1","0.5","1","1.5","2","2.5","3+"]
+    var drivewaySizes = ["10 x 10","20 x 10","20 x 20","30 x 20","30 x 30","+30 x +30"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.title = "Setup Payment"
 
-        //self.view.backgroundColor = UIColor.clearColor()
+        if(self.navigationController == nil){
+            finishButton.setTitle("Save", forState: .Normal)
+        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -34,20 +42,26 @@ class RecentJobRequests: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        if section == 1{
-            return 6
+        
+        switch section{
+        case 0:
+            return yardSizes.count
+        default:
+            return drivewaySizes.count
         }
-        return 1
-    }
-    
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 80
+        
     }
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as! standardCell
+        
+        switch indexPath.section{
+        case 0:
+            cell.label.text = "Price for " + yardSizes[indexPath.row] + " Acres"
+        default:
+            cell.label.text = "Price for " + drivewaySizes[indexPath.row] + " Square Feet"
+        }
 
         // Configure the cell...
 
@@ -55,14 +69,18 @@ class RecentJobRequests: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
         switch section{
         case 0:
-            return "Current Requests"
-         default:
-            return "Completed Requests"
+            return "Lawn Services"
+        default:
+            return "Snow Services"
         }
     }
-
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 80
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -98,11 +116,14 @@ class RecentJobRequests: UITableViewController {
     }
     */
 
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "finishRequest"{
-            let requestvc = segue.destinationViewController as! Request
-            requestvc.newRequest = true
-        }
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
     }
+    */
 
 }

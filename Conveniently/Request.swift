@@ -1,25 +1,95 @@
 //
-//  RecentJobRequests.swift
+//  Request.swift
 //  Conveniently
 //
-//  Created by Demetri Kostakis on 2/5/16.
+//  Created by Demetri Kostakis on 2/6/16.
 //  Copyright © 2016 One50Eight. All rights reserved.
 //
 
 import UIKit
+import MapKit
 
-class RecentJobRequests: UITableViewController {
-
+class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelegate{
+    
+    @IBOutlet weak var doneButton: UIBarButtonItem!
+    @IBOutlet weak var backButton: UIBarButtonItem!
+    
+    @IBOutlet weak var priceField: UITextField!
+    
+    @IBOutlet weak var providerName: UITextField!
+    @IBOutlet weak var providerRating: UILabel!
+    @IBOutlet weak var providerProfilePicture: UIImageView!
+    
+    @IBOutlet weak var clientName: UITextField!
+    @IBOutlet weak var clientProfilePicture: UIImageView!
+    
+    @IBOutlet weak var addressField: standardCell!
+    @IBOutlet weak var map: MKMapView!
+    
+    @IBOutlet weak var typeOfService: UITextField!
+    
+    @IBOutlet weak var timeOfRequest: UITextField!
+    
+    @IBOutlet weak var navBar: UINavigationBar!
+    var newRequest: Bool?
+    
+    //returns view to the original viewController when done
+    @IBAction func dismissPage(sender: AnyObject) {
+        if (newRequest == true){
+            newRequest = false
+            doneButton.title = "Done"
+            providerName.enabled = false
+            clientName.enabled = false
+            typeOfService.enabled = false
+            timeOfRequest.enabled = false
+            
+            return
+        }
+        if(doneButton.title == "Done"){
+            dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+    
+    @IBAction func back(sender: UIBarButtonItem!){
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        //self.view.backgroundColor = UIColor.clearColor()
+        
+        self.navBar.delegate = self
+        
+        var frame: CGRect = self.navBar.frame
+        frame.origin.y = 20
+        
+        self.navBar.frame = frame
+        
+        self.doneButton.title = "Done"
+        backButton.enabled = false
+        backButton.title = ""
+        self.title = "Confirmation"
+        
+        if(newRequest == true){
+            self.doneButton.title = "Save"
+            backButton.enabled = true
+            backButton.title = "Back"
+        }
+        
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
     }
+    //hides status bar when not in editing mode
+    
+    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+        return UIBarPosition.TopAttached
+    }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -30,22 +100,15 @@ class RecentJobRequests: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if section == 1{
-            return 6
-        }
-        return 1
-    }
-    
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 80
+        return 7
     }
 
-    
+    /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
 
@@ -53,15 +116,7 @@ class RecentJobRequests: UITableViewController {
 
         return cell
     }
-    
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section{
-        case 0:
-            return "Current Requests"
-         default:
-            return "Completed Requests"
-        }
-    }
+    */
 
     /*
     // Override to support conditional editing of the table view.
@@ -98,11 +153,14 @@ class RecentJobRequests: UITableViewController {
     }
     */
 
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "finishRequest"{
-            let requestvc = segue.destinationViewController as! Request
-            requestvc.newRequest = true
-        }
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
     }
+    */
 
 }

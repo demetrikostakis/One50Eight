@@ -1,19 +1,18 @@
 //
-//  RecentJobRequests.swift
+//  NewRequest.swift
 //  Conveniently
 //
-//  Created by Demetri Kostakis on 2/5/16.
+//  Created by Demetri Kostakis on 2/6/16.
 //  Copyright © 2016 One50Eight. All rights reserved.
 //
 
 import UIKit
 
-class RecentJobRequests: UITableViewController {
+class NewRequest: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //self.view.backgroundColor = UIColor.clearColor()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -30,22 +29,15 @@ class RecentJobRequests: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 0
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if section == 1{
-            return 6
-        }
-        return 1
-    }
-    
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 80
+        return 0
     }
 
-    
+    /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
 
@@ -53,15 +45,7 @@ class RecentJobRequests: UITableViewController {
 
         return cell
     }
-    
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section{
-        case 0:
-            return "Current Requests"
-         default:
-            return "Completed Requests"
-        }
-    }
+    */
 
     /*
     // Override to support conditional editing of the table view.
@@ -98,11 +82,16 @@ class RecentJobRequests: UITableViewController {
     }
     */
 
+    
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "finishRequest"{
             let requestvc = segue.destinationViewController as! Request
             requestvc.newRequest = true
         }
     }
+
 
 }

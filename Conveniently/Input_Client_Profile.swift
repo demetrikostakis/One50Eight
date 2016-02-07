@@ -12,16 +12,21 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
 
     @IBOutlet weak var yardSizePicker: UIPickerView!
     @IBOutlet weak var drivewaySizePicker: UIPickerView!
+    @IBOutlet weak var distancePicker: UIPickerView!
+    
     @IBOutlet weak var yardSizeLabel: UILabel!
     @IBOutlet weak var drivewaySizeLabel: UILabel!
+    @IBOutlet weak var distanceLabel: UILabel!
     
     var yardSizes = ["0.1","0.5","1","1.5","2","2.5","3+"]
     var drivewaySizes = ["10 x 10","20 x 10","20 x 20","30 x 20","30 x 30","+30 x +30"]
+    var distances = ["1","2","3","4","5","10","20"]
     override func viewDidLoad() {
         super.viewDidLoad()
         
         yardSizeLabel.text = "0.1 Acres"
         drivewaySizeLabel.text = "10 x 10 Sq Ft"
+        distanceLabel.text = "1 Mile"
         //self.view.backgroundColor = UIColor.clearColor()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -44,7 +49,7 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 2
+        return 3
     }
     
     //
@@ -55,8 +60,18 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
         if pickerView == drivewaySizePicker{
             drivewaySizeLabel.text = drivewaySizes[row] + " Sq Ft"
             return
-        }else{
+        }else if pickerView == distancePicker{
+            distanceLabel.text = distances[row] + " Miles"
+            if(row == 0){
+                distanceLabel.text = distances[row] + " Mile"
+            }
+            return
+        }
+        else{
             yardSizeLabel.text = yardSizes[row] + " Acres"
+            if(row == 2){
+                yardSizeLabel.text = yardSizes[row] + " Acre"
+            }
             return
         }
         
@@ -66,6 +81,8 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
     func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerView == drivewaySizePicker{
             return drivewaySizes[row]
+        }else if pickerView == distancePicker{
+            return distances[row]
         }
         return yardSizes[row]
     }
@@ -73,6 +90,8 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == drivewaySizePicker{
             return drivewaySizes.count
+        }else if pickerView == distancePicker{
+            return distances.count
         }
         return yardSizes.count
     }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import QuartzCore
 
 class ProviderProfileMain: UITableViewController {
 
@@ -15,6 +16,7 @@ class ProviderProfileMain: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
         
         self.profilePicture.layer.cornerRadius = self.profilePicture.frame.size.width/2
         self.profilePicture.clipsToBounds = true
@@ -35,12 +37,12 @@ class ProviderProfileMain: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 1
     }
 
     /*
