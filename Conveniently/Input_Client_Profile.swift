@@ -11,9 +11,11 @@ import CloudKit
 
 class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
-    var clientRecord:CKRecord?
-    var userRecord: CKRecord?
     
+    
+    
+    
+    var clientRecord:CKRecord!
 
     @IBOutlet weak var yardSizePicker: UIPickerView!
     @IBOutlet weak var drivewaySizePicker: UIPickerView!
@@ -23,21 +25,28 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
     @IBOutlet weak var drivewaySizeLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
+    @IBOutlet weak var walkwaysPicker: UISegmentedControl!
+    @IBOutlet weak var deckPicker: UISegmentedControl!
+    @IBOutlet weak var vehiclesPicker: UISegmentedControl!
+    
     var yardSizes = ["0.1","0.5","1","1.5","2","2.5","3+"]
     var drivewaySizes = ["10 x 10","20 x 10","20 x 20","30 x 20","30 x 30","+30 x +30"]
     var distances = ["1","2","3","4","5","10","20"]
+   
+    
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        let _signUp = UIBarButtonItem(title: "Sign Up", style: .Plain, target: self, action: "signUp")
+        
+        self.navigationItem.rightBarButtonItem = _signUp
         
         yardSizeLabel.text = "0.1 Acres"
         drivewaySizeLabel.text = "10 x 10 Sq Ft"
         distanceLabel.text = "1 Mile"
-        //self.view.backgroundColor = UIColor.clearColor()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -45,16 +54,46 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
         // Dispose of any resources that can be recreated.
     }
 
+    func signUp(){
+        
+        clientRecord?.setObject(yardSizeLabel.text, forKey: "yardSize")
+        clientRecord?.setObject(drivewaySizeLabel.text, forKey: "drivewaySize")
+        clientRecord?.setObject(Int(distanceLabel.text!), forKey: "maxRadius")
+        
+        let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+        let publicDB = appDel.publicDB
+        publicDB.saveRecord(clientRecord, completionHandler: { record,error in
+            if error != nil{
+                
+            }else{
+                dispatch_sync(dispatch_get_main_queue(), {
+                    appDel.clientRecord = record
+                    self.performSegueWithIdentifier("signUpClient", sender: self)
+                })
+            }
+        })
+    }
+    
+    
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 4
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 3
+        switch section{
+        case 0:
+            return 1
+        case 1:
+            return 1
+        case 2:
+            return 2
+        default:
+            return 4
+        }
     }
     
     //
@@ -104,59 +143,15 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
     }
-    /*
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
+    
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        
+        
     }
-    */
+
 
 }

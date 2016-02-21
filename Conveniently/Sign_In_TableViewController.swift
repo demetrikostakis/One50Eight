@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CloudKit
 
 
 class Sign_In_TableViewController: UITableViewController {
@@ -21,6 +22,9 @@ class Sign_In_TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
         //self.view.backgroundColor = UIColor.clearColor()
         self.navigationItem.title = "Welcome!"
         
@@ -55,11 +59,98 @@ class Sign_In_TableViewController: UITableViewController {
     
     @IBAction func signIn(){
         
+        let predicate = NSPredicate(value: true)
+        
         //checks to see what type of account the user wants to sign in to
         if userPicker!.selectedSegmentIndex == 1{
-            performSegueWithIdentifier("signInProvider", sender: self)
+            
+            let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+            let publicDB = appDel.publicDB
+            
+                let query = CKQuery(recordType: "Provider", predicate: predicate)
+            
+                publicDB.performQuery(query, inZoneWithID: nil, completionHandler: {records, error in
+                    
+                    if error != nil{
+                       
+                        dispatch_sync(dispatch_get_main_queue(), {
+                            
+                            let alertController = UIAlertController(title: "Could Not Connect", message: "Please check your internet connection and try again", preferredStyle: .Alert)
+                            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                            self.presentViewController(alertController, animated: true, completion: nil)
+                            
+                        })
+
+                    }else{
+                        for record in records!{
+                            
+                            if(record.objectForKey("password") as! String == self.passwordField.text! && record.objectForKey("username") as! String == self.usernameField.text!){
+                                
+                                
+                                dispatch_sync(dispatch_get_main_queue(), {
+                                    
+                                    appDel.providerRecord = record
+                                    print(appDel.providerRecord)
+                                    self.performSegueWithIdentifier("signInProvider", sender: self)
+                                })
+                                
+                                
+                                return
+                            }
+                            
+                        }
+                        dispatch_sync(dispatch_get_main_queue(), {
+                            let alertController = UIAlertController(title: "Incorrect Username or Password", message: "The username or password you have entered is incorrect", preferredStyle: .Alert)
+                            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                            self.presentViewController(alertController, animated: true, completion: nil)
+                        })
+                        //print("Incorrect Password")
+
+                    }
+                })
+            
+            
         }else{
-            performSegueWithIdentifier("signInClient", sender: self)
+            
+            let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+            let publicDB = appDel.publicDB
+            
+            let query = CKQuery(recordType: "Client", predicate: predicate)
+            publicDB.performQuery(query, inZoneWithID: nil, completionHandler: {records, error in
+                if error != nil{
+                    dispatch_sync(dispatch_get_main_queue(), {
+                        let alertController = UIAlertController(title: "Could Not Connect", message: "Please check your internet connection and try again", preferredStyle: .Alert)
+                        alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                        self.presentViewController(alertController, animated: true, completion: nil)
+                    })
+                    //print("Error in Request")
+                    
+                }else{
+                    for record in records!{
+                        if(record.objectForKey("password") as! String == self.passwordField.text! && record.objectForKey("username") as! String == self.usernameField.text!){
+                            
+                           
+                            
+                            dispatch_sync(dispatch_get_main_queue(), {
+                                
+                                appDel.clientRecord = record
+                                print(appDel.clientRecord)
+                                self.performSegueWithIdentifier("signInClient", sender: self)
+                            })
+                            
+                            
+                            return
+                        }
+                        
+                    }
+                    dispatch_sync(dispatch_get_main_queue(), {
+                        let alertController = UIAlertController(title: "Incorrect Username or Password", message: "The username or password you have entered is incorrect", preferredStyle: .Alert)
+                        alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                        self.presentViewController(alertController, animated: true, completion: nil)
+                    })
+                    
+                }
+            })
         }
 
     }
@@ -68,8 +159,7 @@ class Sign_In_TableViewController: UITableViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        
     }
     
 

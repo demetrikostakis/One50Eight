@@ -12,6 +12,7 @@ import MessageUI
 class ProviderSideBar: UITableViewController, MFMailComposeViewControllerDelegate {
 
     let sideBarList = ["Payment","Contact Us","About Us","Facebook", "Twitter","Sign Out"]
+    let imageList = [UIImage(imageLiteral: "bill_100px.png"),UIImage(imageLiteral: "message_100px.png"),UIImage(imageLiteral: "star_100px.png"),UIImage(imageLiteral: "facebook_100px.png"),UIImage(imageLiteral: "twitter_100px.png"),UIImage(imageLiteral: "return_100px.png")]
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,6 +45,7 @@ class ProviderSideBar: UITableViewController, MFMailComposeViewControllerDelegat
         let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
         
         cell.textLabel?.text = sideBarList[indexPath.row]
+        cell.imageView?.image = imageList[indexPath.row]
 
         return cell
     }
@@ -62,6 +64,9 @@ class ProviderSideBar: UITableViewController, MFMailComposeViewControllerDelegat
                 self.showSendMailErrorAlert()
             }
         }
+    }
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 80
     }
     
     

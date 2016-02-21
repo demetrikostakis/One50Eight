@@ -30,25 +30,10 @@ class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelega
     
     @IBOutlet weak var timeOfRequest: UITextField!
     
-    @IBOutlet weak var navBar: UINavigationBar!
-    var newRequest: Bool?
+    
+    
     
     //returns view to the original viewController when done
-    @IBAction func dismissPage(sender: AnyObject) {
-        if (newRequest == true){
-            newRequest = false
-            doneButton.title = "Done"
-            providerName.enabled = false
-            clientName.enabled = false
-            typeOfService.enabled = false
-            timeOfRequest.enabled = false
-            
-            return
-        }
-        if(doneButton.title == "Done"){
-            dismissViewControllerAnimated(true, completion: nil)
-        }
-    }
     
     @IBAction func back(sender: UIBarButtonItem!){
         self.dismissViewControllerAnimated(true, completion: nil)
@@ -57,23 +42,12 @@ class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navBar.delegate = self
         
-        var frame: CGRect = self.navBar.frame
-        frame.origin.y = 20
         
-        self.navBar.frame = frame
         
-        self.doneButton.title = "Done"
-        backButton.enabled = false
-        backButton.title = ""
-        self.title = "Confirmation"
+        self.title = "Service Request"
         
-        if(newRequest == true){
-            self.doneButton.title = "Save"
-            backButton.enabled = true
-            backButton.title = "Back"
-        }
+        
         
         
         // Uncomment the following line to preserve selection between presentations

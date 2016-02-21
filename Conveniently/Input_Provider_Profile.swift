@@ -16,8 +16,7 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     var distances = ["1","2","3","4","5","10","20"]
     
     //all records that need to be saved
-    var providerRecord: CKRecord!
-    var userRecord: CKRecord?
+    var providerRecord: CKRecord?
     var scheduleRecords: [CKRecord] = []
     
     //All inputs from the tableview
@@ -33,24 +32,25 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     var dayEditor: Day_Editor_Cell?
     var setDistance: setDistanceCell?
     
-    var nextButton: UIBarButtonItem!
+    
+    
     
     //All Interface Builder Outlets
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //set title of view
-        self.navigationItem.title = "Setup"
-        providerRecord = CKRecord(recordType: "Provider")
-
         
-        //set nextbutton to move to next screen
-        nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("nextPage"))
-        self.navigationItem.rightBarButtonItem = nextButton
-      
+        //set title of view
+        
+        
+        let _signUp = UIBarButtonItem(title: "Sign Up", style: .Plain, target: self, action: "signUp")
+        
+        self.navigationItem.rightBarButtonItem = _signUp
+
     }
 
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -63,7 +63,11 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     }
     
     
-    func nextPage(){
+    func signUp(){
+        
+        let container: CKContainer = CKContainer.defaultContainer()
+        let publicDB: CKDatabase = container.publicCloudDatabase
+        
         
         services = serviceSelector?.serviceSelector.selectedSegmentTitles as! [String]
         weeklySchedule = scheduleEditor!.daySelector.selectedSegmentTitles as! [String]
@@ -77,16 +81,12 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
             endHours.append(cell.endLabel.text!)
             count = count + 1
         }
-        print(startHours)
-        print(endHours)
         
         maxDistance = setDistance?.distanceLabel.text
         
         //adds values to the provider record
         providerRecord?.setObject(services, forKey: "services")
         providerRecord?.setObject(maxDistance, forKey: "maxDistance")
-        let userReference = CKReference(record: userRecord!, action: CKReferenceAction.DeleteSelf)
-        providerRecord?.setObject(userReference, forKey: "user")
         
         //creates the array of schedule records
         count = 0
@@ -94,8 +94,8 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
             
             //initalizes record
             let record = CKRecord(recordType: "Schedule")
-            record.setObject("startTime", forKey: startHours[count])
-            record.setObject("endTime", forKey: endHours[count])
+            record.setObject(startHours[count], forKey: "startTime")
+            record.setObject(endHours[count], forKey: "endTime")
             record.setObject(day, forKey: "day")
             
             //sets reference back to provider
@@ -106,12 +106,41 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
             scheduleRecords.append(record)
         }
         
-        print("This is the array of schedule Records/n")
-        print(scheduleRecords)
-        print("This is the provider record/,")
-        print(providerRecord)
         
-        performSegueWithIdentifier("next", sender: self)
+        let batchSave = CKModifyRecordsOperation(recordsToSave: scheduleRecords, recordIDsToDelete: nil)
+        batchSave.savePolicy = CKRecordSavePolicy.ChangedKeys
+        batchSave.modifyRecordsCompletionBlock = { savedRecords, deletedRecordsIDs, error in
+            if error != nil {
+                print("Error saving records: \(error!.localizedDescription)")
+                dispatch_async(dispatch_get_main_queue(), {
+                    let alertViewController = UIAlertController(title: "Error", message: "Error saving records: \(error!.localizedDescription)", preferredStyle: .Alert)
+                    alertViewController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                    self.presentViewController(alertViewController, animated: true, completion: nil)
+                })
+                
+            } else {
+                print("Successfully saved records")
+            }
+        }
+        
+        publicDB.saveRecord(providerRecord!, completionHandler: {
+            record, error in
+            if error != nil{
+                
+                print("The Record DID NOT SAVE")
+                
+            }else{
+                
+                let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+                appDel.providerRecord = record
+                publicDB.addOperation(batchSave)
+                appDel.schedule = self.scheduleRecords
+                
+                self.performSegueWithIdentifier("providerSignUp", sender: self)
+                
+            }
+        })
+        
     }
     
     //

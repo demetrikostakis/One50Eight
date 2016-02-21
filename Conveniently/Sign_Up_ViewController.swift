@@ -8,6 +8,7 @@
 
 import UIKit
 import CloudKit
+import MapKit
 
 
 class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate {
@@ -20,9 +21,9 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
     @IBOutlet weak var enterEmailField: UITextField!
     @IBOutlet weak var confirmEmail: UITextField!
     @IBOutlet weak var addressField: UITextField!
-    @IBOutlet weak var zipCodeField: UITextField!
+    @IBOutlet weak var firstNameField: UITextField!
+    @IBOutlet weak var lastNameField: UITextField!
     
-    var userRecord: CKRecord?
     var clientRecord: CKRecord?
     var providerRecord: CKRecord?
 
@@ -80,7 +81,7 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
         super.viewDidLoad()
         
         //self.view.backgroundColor = UIColor.clearColor()
-        self.navigationItem.title = "Sign Up"
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -109,53 +110,116 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 4
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
 
-        return 8
+        switch section{
+        case 0:
+            return 3
+        case 1:
+            return 2
+        case 2:
+            return 2
+        default:
+            return 1
+            
+        }
     }
     
     func nextPage(){
         
-        //add attributes to the record
-        userRecord = CKRecord(recordType: "User")
-        userRecord?.setObject(enterUsernameField.text, forKey: "username")
-        userRecord?.setObject(enterPasswordField.text, forKey: "password")
-        userRecord?.setObject(confirmEmail.text, forKey: "email")
-        
-        print(userRecord)
-        
-        let address = zipCodeField.text!
-        
-        //creates location object from address
-        let geocoder: CLGeocoder = CLGeocoder()
-        geocoder.geocodeAddressString(address, completionHandler: {placemarks,error in
-            if placemarks?.count > 0{
-                
-                let placemark = placemarks?.first
-                let location = placemark?.location
-                self.userRecord?.setObject(location, forKey: "address")
-                print("WE DID IT")
-            }
-        })
-        
-        
+        if (enterUsernameField.text?.characters.count < 7)||(enterPasswordField.text?.characters.count < 7){
+            let alertVC = UIAlertController(title: "Incomplete", message: "Please complete all fields to proceed", preferredStyle: .Alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alertVC, animated: true, completion: nil)
+            return
+        }
+
         if userTypePicker!.selectedSegmentIndex == 0{
             
+            //add attributes to the record
             providerRecord = CKRecord(recordType: "Provider")
             
-            performSegueWithIdentifier("setUpProvider", sender: self)
+            providerRecord?.setObject(enterUsernameField.text!, forKey: "username")
+            providerRecord?.setObject(enterPasswordField.text!, forKey: "password")
+            providerRecord?.setObject(firstNameField.text!, forKey: "firstName")
+            providerRecord?.setObject(lastNameField.text!, forKey: "lastName")
+            providerRecord?.setObject(confirmEmail.text, forKey: "email")
+            let address = addressField.text!
+            
+            
+            //creates location object from address
+            let geocoder: CLGeocoder = CLGeocoder()
+            geocoder.geocodeAddressString(address, completionHandler: {placemarks,error in
+                if placemarks?.count > 0{
+                    
+                    let placemark = placemarks?.first
+                    let location = placemark?.location
+                    self.providerRecord?.setObject(location, forKey: "address")
+                }
+            })
+    
+        performSegueWithIdentifier("setUpProvider", sender: self)
             
         }else{
             
             clientRecord = CKRecord(recordType: "Client")
+        
+            clientRecord?.setObject(enterUsernameField.text, forKey: "username")
+            clientRecord?.setObject(enterPasswordField.text, forKey: "password")
+            clientRecord?.setObject(firstNameField.text!, forKey: "firstName")
+            clientRecord?.setObject(lastNameField.text!, forKey: "lastName")
+            clientRecord?.setObject(confirmEmail.text, forKey: "email")
+            
+            let address = addressField.text!
+            
+            
+            //creates location object from address
+            let geocoder: CLGeocoder = CLGeocoder()
+            geocoder.geocodeAddressString(address, completionHandler: {placemarks,error in
+                if placemarks?.count > 0{
+                    
+                    let placemark = placemarks?.first
+                    let location = placemark?.location
+                    self.clientRecord?.setObject(location, forKey: "address")
+                }
+            })
+
+            
             
             performSegueWithIdentifier("setUpClient", sender: self)
             
         }
+    }
+    
+    
+    
+    func searchForAddress(_address: String) -> CLLocation{
+        
+        var location: CLLocation?
+        let localSearchRequest = MKLocalSearchRequest()
+        localSearchRequest.naturalLanguageQuery = _address
+        let localSearch = MKLocalSearch(request: localSearchRequest)
+        
+        dispatch_sync(dispatch_get_main_queue(), {
+            localSearch.startWithCompletionHandler { (localSearchResponse, error) -> Void in
+                
+                if localSearchResponse == nil{
+                    let alertController = UIAlertController(title: nil, message: "Place Not Found", preferredStyle: UIAlertControllerStyle.Alert)
+                    alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default, handler: nil))
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                    return
+                }
+                
+                location = CLLocation(latitude: localSearchResponse!.boundingRegion.center.latitude, longitude: localSearchResponse!.boundingRegion.center.longitude)
+            }
+
+        })
+        
+        return location!
     }
 
 
@@ -182,12 +246,12 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
         if segue.identifier == "setUpClient"{
             
             let signupVC = segue.destinationViewController as! Input_Client_Profile
-            signupVC.userRecord = self.userRecord
+            signupVC.clientRecord = self.clientRecord!
             
         }else{
             
             let signupVC = segue.destinationViewController as! Input_Provider_Profile
-            signupVC.userRecord = self.userRecord
+            signupVC.providerRecord = self.providerRecord!
             
         }
         

@@ -58,6 +58,18 @@ class ClientSideBar: UITableViewController, MFMailComposeViewControllerDelegate 
             }else{
                 self.showSendMailErrorAlert()
             }
+        }else if(indexPath.row == 6){
+            let alertController = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: UIAlertControllerStyle.Alert)
+            let signOut = UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: { alert in
+                
+                self.performSegueWithIdentifier("clientSignOut", sender: self)
+                
+            })
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: nil)
+            
+            alertController.addAction(signOut)
+            alertController.addAction(cancel)
+            self.presentViewController(alertController, animated: true, completion: nil)
         }
     }
     
@@ -66,7 +78,7 @@ class ClientSideBar: UITableViewController, MFMailComposeViewControllerDelegate 
         let mailComposerVC = MFMailComposeViewController()
         mailComposerVC.mailComposeDelegate = self //Extremely important to se the --mailComposeDelegate-- property, NOT the --delegate-- property
         
-        mailComposerVC.setToRecipients(["zacharyeliopoulos@yahoo.com"])
+        mailComposerVC.setToRecipients(["contact_us@one50eight.com"])
         mailComposerVC.setSubject("Conveniently Feedback")
         mailComposerVC.setMessageBody("Dear One50Eight,\n\nI would like to share the following feedback..\n Sent from Conveniently App", isHTML: false)
         

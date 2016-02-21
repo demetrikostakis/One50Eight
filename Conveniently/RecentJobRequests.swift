@@ -42,7 +42,7 @@ class RecentJobRequests: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 80
+        return 100
     }
 
     
@@ -99,10 +99,7 @@ class RecentJobRequests: UITableViewController {
     */
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "finishRequest"{
-            let requestvc = segue.destinationViewController as! Request
-            requestvc.newRequest = true
-        }
+        
     }
 
 }

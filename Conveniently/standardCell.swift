@@ -11,7 +11,7 @@ import UIKit
 class standardCell: UITableViewCell {
 
     @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var textField: NSLayoutConstraint!
+    @IBOutlet weak var textField: UITextField!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

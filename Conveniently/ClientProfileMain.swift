@@ -7,11 +7,59 @@
 //
 
 import UIKit
+import CloudKit
+import CoreLocation
 
 class ClientProfileMain: UITableViewController {
 
+    var clientRecord: CKRecord = (UIApplication.sharedApplication().delegate as! AppDelegate).clientRecord!
+    
+    var addressString = ""
+    
     @IBOutlet weak var profilePicture: UIImageView!
 
+    @IBOutlet var viewWIthButtons: UIView!
+    @IBOutlet weak var navBar: UINavigationItem!
+    
+    var personalSelected: Bool = false
+    var paymentSelected: Bool = false
+    var yardSelected: Bool = true
+    
+    //navBar button functions to switch views
+    @IBAction func showPersonal(sender: AnyObject) {
+        personalSelected = true
+        paymentSelected = false
+        yardSelected = false
+        let location = self.clientRecord.objectForKey("address") as! CLLocation
+        let geocoder: CLGeocoder = CLGeocoder()
+        
+        
+            geocoder.reverseGeocodeLocation(location, completionHandler: {placemark,error in
+                if error != nil{
+                    print("there was an error reverse geolocating the location")
+                }else{
+                    let _placemark = placemark?.last
+                    self.addressString = "\(_placemark!.subThoroughfare!) \(_placemark!.thoroughfare!) \(_placemark!.locality!), \(_placemark!.administrativeArea!)"
+                    self.tableView.reloadData()
+                }
+            })
+        
+
+    }
+    @IBAction func showPayment(sender: AnyObject) {
+        paymentSelected = true
+        yardSelected = false
+        personalSelected = false
+        self.tableView.reloadData()
+    }
+    @IBAction func showYard(sender: AnyObject) {
+        yardSelected = true
+        personalSelected = false
+        paymentSelected = false
+        self.tableView.reloadData()
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,23 +84,152 @@ class ClientProfileMain: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        if(yardSelected){
+            return 2
+        }else if(personalSelected){
+            return 4
+        }else{
+            return 1
+        }
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 3
+        if(yardSelected){
+            return 2
+        }else if(personalSelected){
+            switch section{
+            case 0:
+                return 2
+            case 1:
+                return 2
+            case 2:
+                return 1
+            default:
+                return 1
+            }
+        }else{
+            return 1
+        }
     }
 
-    /*
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        
+        if(yardSelected){
+            
+            switch indexPath.section{
+            case 0:
+                if indexPath.row == 0{
+                    let cell = tableView.dequeueReusableCellWithIdentifier("aboutSizes", forIndexPath: indexPath)
+                    return cell
+                }else{
+                    let cell = tableView.dequeueReusableCellWithIdentifier("sizes", forIndexPath: indexPath) as! Profile_YardAndDrivewaySizeTableViewCell
+                    return cell
+                }
+            default:
+                if indexPath.row == 0{
+                    let cell = tableView.dequeueReusableCellWithIdentifier("aboutRadius", forIndexPath: indexPath)
+                    return cell
+                }else{
+                    let cell = tableView.dequeueReusableCellWithIdentifier("radius", forIndexPath: indexPath) as! Profile_MaxDistanceTableViewCell
+                    return cell
+                }
+            }
+            
+        }else if(personalSelected){
+            let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! standardCell
+            
+            switch indexPath.section{
+            case 0:
+                switch indexPath.row{
+                case 0:
+                    cell.label?.text = "username"
+                    cell.textField.text = self.clientRecord.objectForKey("username") as! String
 
-        // Configure the cell...
+                default:
+                    cell.label?.text = "password"
+                    cell.textField.text = self.clientRecord.objectForKey("password") as! String
 
-        return cell
+                }
+            case 1:
+                switch indexPath.row{
+                case 0:
+                    cell.label?.text = "First"
+                    cell.textField.text = self.clientRecord.objectForKey("firstName") as! String
+
+                default:
+                    cell.label?.text = "Last"
+                    cell.textField.text = self.clientRecord.objectForKey("lastName") as! String
+
+                }
+            case 2:
+                cell.label?.text = "Email"
+                cell.textField.text = self.clientRecord.objectForKey("email") as! String
+            default:
+                cell.label?.text = "Address"
+                cell.textField.text = addressString
+            }
+            return cell
+        }else{
+            
+            let cell = UITableViewCell()
+            return cell
+        }
+        
     }
-    */
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        if(yardSelected){
+            if indexPath.section == 0{
+                if indexPath.row == 0{
+                    return 170
+                }else{
+                    return 236
+                }
+            }else{
+                if indexPath.row == 0{
+                    return 100
+                }else{
+                    return 130
+                }
+            }
+
+        }else if(personalSelected){
+            return 80
+        }else{
+            return 44
+        }
+        
+    }
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        
+        if(yardSelected){
+            switch section{
+            case 0:
+                return "About your Property Sizes"
+            default:
+                return "About Your Maximum Radius"
+            }
+        }else if(personalSelected){
+            switch section{
+            case 0:
+                return "Username"
+            case 1:
+                return "Your Name"
+            case 2:
+                return "Your Email"
+            default:
+                return "Your Address"
+            }
+
+        }else{
+            return ""
+        }
+        
+    }
 
     /*
     // Override to support conditional editing of the table view.

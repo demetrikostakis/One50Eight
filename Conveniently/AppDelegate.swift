@@ -23,10 +23,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var type: String?
     
     var user: CKRecord?
+    var providerRecord: CKRecord?
+    var clientRecord: CKRecord?
+    
     var userType: CKRecord?//either a client or provider CKRecord
-    var schedule: [CKRecord]?
-    var requests: [CKRecord]?
-    var reviews: [CKRecord]?
+    
+    var schedule: [CKRecord] = []
+    var requests: [CKRecord] = []
+    var reviews: [CKRecord] = []
     
     
     
@@ -61,6 +65,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             recordID = CKRecordID(recordName: idString!)
             
         }
+        
+        
+        
         
         //checks to make sure there is a loginStatus attribute
         if loginStatus != nil{
@@ -121,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     if error != nil{
                         
                     }else{
-                        self.requests = records
+                        self.requests = records!
                     }
                 })
                 
@@ -140,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         if error != nil{
                             
                         }else{
-                            self.schedule = records
+                            self.schedule = records!
                         }
                     })
                     //querys for the providers reviews
@@ -157,7 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         if error != nil{
                             
                         }else{
-                            self.reviews = records
+                            self.reviews = records!
                         }
                     })
 
@@ -172,6 +179,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = initialViewController
             self.window?.makeKeyAndVisible()
         }
+        
         
         return true
     }
