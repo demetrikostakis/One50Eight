@@ -145,27 +145,27 @@ class ClientProfileMain: UITableViewController {
                 switch indexPath.row{
                 case 0:
                     cell.label?.text = "username"
-                    cell.textField.text = self.clientRecord.objectForKey("username") as! String
+                    cell.textField.text = self.clientRecord.objectForKey("username") as? String
 
                 default:
                     cell.label?.text = "password"
-                    cell.textField.text = self.clientRecord.objectForKey("password") as! String
+                    cell.textField.text = self.clientRecord.objectForKey("password") as? String
 
                 }
             case 1:
                 switch indexPath.row{
                 case 0:
                     cell.label?.text = "First"
-                    cell.textField.text = self.clientRecord.objectForKey("firstName") as! String
+                    cell.textField.text = self.clientRecord.objectForKey("firstName") as? String
 
                 default:
                     cell.label?.text = "Last"
-                    cell.textField.text = self.clientRecord.objectForKey("lastName") as! String
+                    cell.textField.text = self.clientRecord.objectForKey("lastName") as? String
 
                 }
             case 2:
                 cell.label?.text = "Email"
-                cell.textField.text = self.clientRecord.objectForKey("email") as! String
+                cell.textField.text = self.clientRecord.objectForKey("email") as? String
             default:
                 cell.label?.text = "Address"
                 cell.textField.text = addressString

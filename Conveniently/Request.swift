@@ -8,8 +8,14 @@
 
 import UIKit
 import MapKit
+import CloudKit
+import CoreLocation
 
-class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelegate{
+class Request: UITableViewController, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate{
+    
+    var clientRecord: CKRecord!
+    var providerRecord: CKRecord!
+    var requestRecord: CKRecord!
     
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var backButton: UIBarButtonItem!
@@ -23,52 +29,143 @@ class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelega
     @IBOutlet weak var clientName: UITextField!
     @IBOutlet weak var clientProfilePicture: UIImageView!
     
-    @IBOutlet weak var addressField: standardCell!
+    @IBOutlet weak var addressField: UITextField!
     @IBOutlet weak var map: MKMapView!
     
     @IBOutlet weak var typeOfService: UITextField!
     
     @IBOutlet weak var timeOfRequest: UITextField!
+
+    @IBOutlet weak var servicePicker: UIPickerView!
     
+    @IBOutlet weak var serviceLabel: UILabel!
+    
+    var finishButton: UIBarButtonItem!
+    
+    var address: CLLocation!
+    var clientReference: CKReference!
+    var providerReference: CKReference!
+    var scheduledService: String!
+    var price: Int = 0
+    var serviceDate: NSDate!
     
     
     
     //returns view to the original viewController when done
     
-    @IBAction func back(sender: UIBarButtonItem!){
-        self.dismissViewControllerAnimated(true, completion: nil)
+    
+    func confirmRequest(){
+        let alertController = UIAlertController(title: "Confirm Request", message: "Are you ready to finish and send this service request?", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: .Default, handler: ({action in
+            
+            self.requestRecord.setObject(self.address, forKey: "address")
+            self.requestRecord.setObject(self.clientReference, forKey: "client")
+            self.requestRecord.setObject(self.providerReference, forKey: "provider")
+            self.requestRecord.setObject(self.scheduledService, forKey: "service")
+            self.requestRecord.setObject(self.price, forKey: "price")
+            
+            
+                let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+                let publicDB = appDel.publicDB
+                publicDB.saveRecord(self.requestRecord, completionHandler: {record,error in
+                    if error != nil{
+                        let alertController = UIAlertController(title: "Could Not Complete Request", message: "There was an error completing your request. please check your internet connection and try again", preferredStyle: .Alert)
+                        alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                        self.presentViewController(alertController, animated: true, completion: nil)
+                        
+                    }else{
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.performSegueWithIdentifier("finishRequest", sender: self)
+                        })
+                    }
+            })
+            
+            
+        })))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
-        
+        finishButton = UIBarButtonItem(title: "Finish", style: .Plain, target: self, action: Selector("confirmRequest"))
+        self.navigationItem.rightBarButtonItem = finishButton
         self.title = "Service Request"
         
+        self.clientName.text = "\(clientRecord.objectForKey("firstName") as! String) \(clientRecord.objectForKey("lastName") as! String))"
+        
+        self.providerName.text = "\(providerRecord.objectForKey("firstName") as! String) \(providerRecord.objectForKey("lastName") as! String))"
+        
+        let location = self.clientRecord.objectForKey("address") as! CLLocation
+        let geocoder: CLGeocoder = CLGeocoder()
+        
+        let locationCoordinate2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        let viewRegion = MKCoordinateRegionMakeWithDistance(locationCoordinate2D, 500, 500)
+        self.map.setRegion(viewRegion, animated: false)
+        geocoder.reverseGeocodeLocation(location, completionHandler: {placemark,error in
+            if error != nil{
+                print("there was an error reverse geolocating the location")
+            }else{
+                let _placemark = placemark?.last
+                self.addressField.text = "\(_placemark!.subThoroughfare!) \(_placemark!.thoroughfare!) \(_placemark!.locality!), \(_placemark!.administrativeArea!)"
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = location.coordinate
+                self.map.addAnnotation(annotation)
+            }
+        })
+        
+        serviceDate = self.requestRecord.objectForKey("timeOfRequest") as! NSDate
+        
+        let dateFormatter: NSDateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "dd MMMM  hh:mm a"
+        let serviceDateString = dateFormatter.stringFromDate(self.serviceDate)
+        
+        timeOfRequest.text = serviceDateString
+        
+        serviceLabel.text = (providerRecord.objectForKey("services") as! [String])[0]
+        
+        priceField.text = String(price)
         
         
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        address = location
+        clientReference = CKReference(record: clientRecord, action: .DeleteSelf)
+        providerReference = CKReference(record: providerRecord, action: .DeleteSelf)
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        
     }
-    //hides status bar when not in editing mode
-    
-    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
-        return UIBarPosition.TopAttached
-    }
-    
-    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    // MARK: - Picker view data source
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        return (providerRecord.objectForKey("services") as! [String])[row]
+        
+    }
+    
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        
+        
+        return (providerRecord.objectForKey("services") as! [String]).count
+        
+        
+    }
+    
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.serviceLabel.text = pickerView(_pickerView, titleForRow: row, forComponent: component)
+        self.scheduledService = pickerView(_pickerView, titleForRow: row, forComponent: component)
+    }
+
+    
+    
+    
 
     // MARK: - Table view data source
 
@@ -79,54 +176,10 @@ class Request: UITableViewController, UITextFieldDelegate, UINavigationBarDelega
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 7
+        return 6
     }
 
-    /*
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
+    
     /*
     // MARK: - Navigation
 

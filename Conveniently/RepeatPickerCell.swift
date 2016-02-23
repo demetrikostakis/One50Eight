@@ -13,6 +13,7 @@ class RepeatPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDel
     var numComponents: Int = 1
     var componentOne: [String] = []
     var componentTwo: [String] = []
+    var parentViewController: SetRequestDate?
 
     @IBOutlet weak var picker: UIPickerView!
     

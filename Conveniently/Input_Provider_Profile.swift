@@ -16,7 +16,7 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     var distances = ["1","2","3","4","5","10","20"]
     
     //all records that need to be saved
-    var providerRecord: CKRecord?
+    var providerRecord: CKRecord!
     var scheduleRecords: [CKRecord] = []
     
     //All inputs from the tableview
@@ -42,9 +42,9 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
 
         
         //set title of view
+        print(providerRecord!)
         
-        
-        let _signUp = UIBarButtonItem(title: "Sign Up", style: .Plain, target: self, action: "signUp")
+        let _signUp = UIBarButtonItem(title: "Sign Up", style: .Plain, target: self, action: "signProviderUp")
         
         self.navigationItem.rightBarButtonItem = _signUp
 
@@ -63,10 +63,10 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
     }
     
     
-    func signUp(){
+    func signProviderUp(){
         
-        let container: CKContainer = CKContainer.defaultContainer()
-        let publicDB: CKDatabase = container.publicCloudDatabase
+        let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+        let publicDB: CKDatabase = appDel.publicDB
         
         
         services = serviceSelector?.serviceSelector.selectedSegmentTitles as! [String]
@@ -85,8 +85,8 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
         maxDistance = setDistance?.distanceLabel.text
         
         //adds values to the provider record
-        providerRecord?.setObject(services, forKey: "services")
-        providerRecord?.setObject(maxDistance, forKey: "maxDistance")
+        providerRecord.setObject(services, forKey: "services")
+        providerRecord.setObject(maxDistance, forKey: "maxDistance")
         
         //creates the array of schedule records
         count = 0
@@ -119,28 +119,34 @@ class Input_Provider_Profile: UITableViewController, UIPickerViewDataSource, UIP
                 })
                 
             } else {
-                print("Successfully saved records")
+            
             }
         }
-        
         publicDB.saveRecord(providerRecord!, completionHandler: {
             record, error in
             if error != nil{
                 
-                print("The Record DID NOT SAVE")
-                
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    let alertViewController = UIAlertController(title: "Could Not Connect to Server", message: "There was an error setting up your new account. Please check your internet connection and try again", preferredStyle: .Alert)
+                    alertViewController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                    self.presentViewController(alertViewController, animated: true, completion: nil)
+                    
+                })
+
             }else{
                 
                 let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
                 appDel.providerRecord = record
                 publicDB.addOperation(batchSave)
                 appDel.schedule = self.scheduleRecords
-                
-                self.performSegueWithIdentifier("providerSignUp", sender: self)
-                
+               
+                self.performSegueWithIdentifier("finishProviderSignUp", sender: self)
             }
         })
         
+        
+
     }
     
     //

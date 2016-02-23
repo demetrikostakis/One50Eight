@@ -12,6 +12,8 @@ import CloudKit
 class ClientProfileTabController: UITabBarController {
     
     var clientRecord: CKRecord = (UIApplication.sharedApplication().delegate as! AppDelegate).clientRecord!
+    
+    
 
     @IBOutlet weak var settingsButton: UIBarButtonItem!
     

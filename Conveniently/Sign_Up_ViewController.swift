@@ -148,8 +148,8 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
             providerRecord?.setObject(firstNameField.text!, forKey: "firstName")
             providerRecord?.setObject(lastNameField.text!, forKey: "lastName")
             providerRecord?.setObject(confirmEmail.text, forKey: "email")
-            let address = addressField.text!
             
+            let address = addressField.text!
             
             //creates location object from address
             let geocoder: CLGeocoder = CLGeocoder()
@@ -162,6 +162,7 @@ class Sign_Up_ViewController: UITableViewController, UIPickerViewDataSource, UIP
                 }
             })
     
+            print(providerRecord!)
         performSegueWithIdentifier("setUpProvider", sender: self)
             
         }else{

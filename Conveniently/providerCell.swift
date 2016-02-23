@@ -12,9 +12,11 @@ class providerCell: UITableViewCell {
     
     
     
+    @IBOutlet weak var lawnImage: UIImageView!
+    @IBOutlet weak var snowImage: UIImageView!
+    @IBOutlet weak var leaveImage: UIImageView!
 
     @IBOutlet weak var providerProfilePicture: UIImageView!
-    @IBOutlet weak var priceForYard: UILabel!
     @IBOutlet weak var distance: UILabel!
     @IBOutlet weak var providerName: UILabel!
     
@@ -32,17 +34,22 @@ class providerCell: UITableViewCell {
             _isSelected = false
             
             parentViewController.nextButton.enabled = false
-            
+            parentViewController.providerSelected = false
             button.selected = false
         }else{
             
-            _isSelected = true
+            if(parentViewController.providerSelected){
+                
+            }else{
+                _isSelected = true
+                
+                parentViewController.nextButton.enabled = true
+                parentViewController.providerSelected = true
+                parentViewController.updateSelectedItem()
+                
+                button.selected = true
+            }
             
-           
-            parentViewController.nextButton.enabled = true
-            parentViewController.updateSelectedItem()
-            
-            button.selected = true
         }
 
         

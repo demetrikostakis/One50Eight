@@ -7,11 +7,22 @@
 //
 
 import UIKit
+import CloudKit
 
 class RecentJobRequests: UITableViewController {
 
+    var clientRecord = (UIApplication.sharedApplication().delegate as! AppDelegate).clientRecord!
+    
+    var requestRecords: [CKRecord]?
+    
+    var requestProvider: CKRecord?
+    
+    var selectedRequest: CKRecord?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.downloadData()
 
         //self.view.backgroundColor = UIColor.clearColor()
         // Uncomment the following line to preserve selection between presentations
@@ -25,81 +36,117 @@ class RecentJobRequests: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
+    
+    func downloadData(){
+        
+        let publicDB = (UIApplication.sharedApplication().delegate as! AppDelegate).publicDB
+        
+        let requestReference = CKReference(record: clientRecord, action: CKReferenceAction.DeleteSelf)
+        
+        let predicate = NSPredicate(value: true)
+        
+        let requestQuery = CKQuery(recordType: "Request", predicate: predicate)
+        
+        publicDB.performQuery(requestQuery, inZoneWithID: nil, completionHandler: {records, error in
+            if error != nil{
+                //error handling
+            }else{
+                var requests: [CKRecord] = []
+                for record in records!{
+                    if record.objectForKey("client") as! CKReference == requestReference{
+                        requests.append(record)
+                    }
+                }
+                dispatch_sync(dispatch_get_main_queue(), {
+                    self.requestRecords = requests
+                    self.tableView.reloadData()
+                })
+            }
+            
+        })
+        
+    }
 
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if section == 1{
-            return 6
+        if requestRecords != nil{
+            return (requestRecords!.count)
         }
-        return 1
+        return 2
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 100
+        if requestRecords != nil{
+            return 100
+        }else{
+            if indexPath.row == 0{
+                return 312
+            }else{
+                return 100
+            }
+        }
+        
+        
     }
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        
+        if requestRecords != nil{
+            let _cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+            
+            return _cell
+        }else{
+            self.tableView.separatorColor = UIColor.clearColor()
+            if indexPath.row == 0{
+                let emptyArrayCell = tableView.dequeueReusableCellWithIdentifier("createRequest", forIndexPath: indexPath)
+                return emptyArrayCell
+            }else{
+                let requestDescription = tableView.dequeueReusableCellWithIdentifier("requestDescription", forIndexPath: indexPath)
+                
+                return requestDescription
+
+            }
+        }
+        
 
         // Configure the cell...
 
-        return cell
     }
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section{
-        case 0:
-            return "Current Requests"
-         default:
-            return "Completed Requests"
+
+        if requestRecords != nil{
+            return "All Previous Service Requests"
+        }else{
+            return ""
         }
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let providerReference: CKReference = self.requestRecords![indexPath.row].objectForKey("provider") as! CKReference
+        let requestProviderID = providerReference.recordID
+        requestProvider = CKRecord(recordType: "Provider", recordID: requestProviderID)
+        selectedRequest = self.requestRecords![indexPath.row]
+        self.performSegueWithIdentifier("displayRequest", sender: self)
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
+        if segue.identifier == "displayRequest"{
+            let destinationVC = segue.destinationViewController as! Request
+            destinationVC.providerRecord = self.requestProvider
+            destinationVC.clientRecord = self.clientRecord
+            destinationVC.requestRecord = selectedRequest
+        }
     }
 
 }

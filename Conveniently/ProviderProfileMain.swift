@@ -88,7 +88,7 @@ class ProviderProfileMain: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 3
+        return 2
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -97,13 +97,6 @@ class ProviderProfileMain: UITableViewController {
         switch section{
             
         case 0:
-            return 1
-        case 1:
-            
-            if(providerRecord.objectForKey("prices") != nil){
-                return (providerRecord.objectForKey("prices") as! [String]).count
-            }
-            
             return 1
         default:
             return scheduleRecords.count
@@ -114,9 +107,8 @@ class ProviderProfileMain: UITableViewController {
         if section == 0{
             return "Services Offered"
             
-        }else if(section == 1){
-            return "Prices"
         }
+        
         return "Schedule"
     }
 
@@ -132,12 +124,6 @@ class ProviderProfileMain: UITableViewController {
         case 0:
             cell = tableView.dequeueReusableCellWithIdentifier("services", forIndexPath: indexPath)
             return cell!
-        case 1:
-            let pricecell = tableView.dequeueReusableCellWithIdentifier("prices", forIndexPath: indexPath) as! providerPriceCell
-            if(providerRecord.objectForKey("prices") != nil){
-                pricecell.priceLabel.text = "\((providerRecord.objectForKey("prices") as! [String])[indexPath.row]))"
-            }
-            return pricecell
         default:
             cell = tableView.dequeueReusableCellWithIdentifier("schedule", forIndexPath: indexPath)
             return cell!
@@ -150,8 +136,6 @@ class ProviderProfileMain: UITableViewController {
             
         case 0:
             return 120
-        case 1:
-            return 46
         default:
             return 44
         }

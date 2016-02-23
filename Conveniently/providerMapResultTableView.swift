@@ -16,13 +16,10 @@ class providerMapResultTableView: UITableViewController, CLLocationManagerDelega
     @IBOutlet weak var providerMap: MKMapView!
     
     var requestRecord: CKRecord = CKRecord(recordType: "Request")
-    
-    var clientRecord: CKRecord?
-    
+    var clientRecord: CKRecord = (UIApplication.sharedApplication().delegate as! AppDelegate).clientRecord!
     var providerRecords: [CKRecord] = []
     
     let locationManager = CLLocationManager()
-    
     var currentLocation:CLLocation?
     
     @IBOutlet weak var navBar: UINavigationBar!
@@ -30,43 +27,9 @@ class providerMapResultTableView: UITableViewController, CLLocationManagerDelega
     
     var selectedProvider: CKRecord?
     var tappedProvider: CKRecord?
-    
-    func nextPage(){
-        performSegueWithIdentifier("setRequestDate", sender: self)
-    }
-    
-    func updateSelectedItem(){
-        var row = 0
-        while row<self.providerRecords.count{
-            let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forItem: row, inSection: 0)) as! providerCell
-            
-            if cell._isSelected{
-                selectedProvider = providerRecords[row]
-                return
-            }
-            row++
-        }
-    }
-    
-    func updateTappedProvider(){
-        var row = 0
-        while row < self.providerRecords.count{
-            let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forItem: row, inSection: 0)) as! providerCell
-            if cell._wasSelected{
-                tappedProvider = providerRecords[row]
-                
-                let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
-                appDel.providerRecord = self.tappedProvider!
-                
-                performSegueWithIdentifier("showProviderProfile", sender: self)
-                cell._wasSelected = false
-                return
-            }
-            row++
-        }
-    }
-    
     var nextButton: UIBarButtonItem!
+    
+    var providerSelected: Bool = false
     
     
     // MARK: View Functions
@@ -122,21 +85,51 @@ class providerMapResultTableView: UITableViewController, CLLocationManagerDelega
                 })
             }
         })
-
-        
-        
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    // MARK: - Updating and Segue Functions
+    func nextPage(){
+        performSegueWithIdentifier("finalizeRequest", sender: self)
+    }
+    
+    func updateSelectedItem(){
+        var row = 0
+        while row<self.providerRecords.count{
+            let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forItem: row, inSection: 0)) as! providerCell
+            
+            if cell._isSelected{
+                selectedProvider = providerRecords[row]
+                return
+            }
+            row++
+        }
+    }
+    
+    func updateTappedProvider(){
+        var row = 0
+        while row < self.providerRecords.count{
+            let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forItem: row, inSection: 0)) as! providerCell
+            if cell._wasSelected{
+                tappedProvider = providerRecords[row]
+                
+                let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
+                appDel.providerRecord = self.tappedProvider!
+                
+                performSegueWithIdentifier("showProviderProfile", sender: self)
+                cell._wasSelected = false
+                return
+            }
+            row++
+        }
+    }
+    
+    
+
 
     // MARK: - Table view data source
 
@@ -159,6 +152,27 @@ class providerMapResultTableView: UITableViewController, CLLocationManagerDelega
         
         cell.providerName.text = "\(firstName) \(lastName)"
         cell.parentViewController = self
+        
+        let services = self.providerRecords[indexPath.row].objectForKey("services") as! [String]
+        
+        for service in services{
+            switch service{
+                case "Mowing Lawn":
+                    cell.lawnImage.image = UIImage(imageLiteral: "grass_filled_100px.png")
+                case "Snow":
+                    cell.snowImage.image = UIImage(imageLiteral: "winter_filled_100px.png")
+                case "Raking Leaves":
+                cell.leaveImage.image = UIImage(imageLiteral: "autumn_filled_100px.png")
+                default:
+                    break
+            }
+        }
+        
+        let clientLocation = self.clientRecord.objectForKey("address") as! CLLocation
+        let providerLocation = providerRecords[indexPath.row].objectForKey("address") as! CLLocation
+        let distanceFromProvider: Double = Double(clientLocation.distanceFromLocation(providerLocation) * 0.000621371)
+
+        cell.distance.text = "\(Double(round(distanceFromProvider*10)/10)) Miles"
 
         // Configure the cell...
 
@@ -179,7 +193,11 @@ class providerMapResultTableView: UITableViewController, CLLocationManagerDelega
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "showProviderProfile"{
+        if segue.identifier == "finalizeRequest"{
+            let requestPage = segue.destinationViewController as! Request
+            requestPage.clientRecord = self.clientRecord
+            requestPage.providerRecord = self.selectedProvider
+            requestPage.requestRecord = self.requestRecord
             
         }
     }

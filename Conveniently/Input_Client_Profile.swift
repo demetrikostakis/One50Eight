@@ -62,9 +62,16 @@ class Input_Client_Profile: UITableViewController, UIPickerViewDataSource, UIPic
         
         let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
         let publicDB = appDel.publicDB
+        
         publicDB.saveRecord(clientRecord, completionHandler: { record,error in
             if error != nil{
-                
+                dispatch_sync(dispatch_get_main_queue(), {
+                    let alertController = UIAlertController(title: "Incorrect Username or Password", message: "The username or password you have entered is incorrect", preferredStyle: .Alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                })
+
+
             }else{
                 dispatch_sync(dispatch_get_main_queue(), {
                     appDel.clientRecord = record

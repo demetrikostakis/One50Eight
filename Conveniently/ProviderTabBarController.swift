@@ -11,7 +11,8 @@ import CloudKit
 
 class ProviderTabBarController: UITabBarController {
 
-    var providerRecord: CKRecord?
+    
+    var providerRecord: CKRecord = (UIApplication.sharedApplication().delegate as! AppDelegate).providerRecord!
     
     @IBOutlet var openDrawer: UIBarButtonItem!
     

@@ -25,14 +25,9 @@ class Sign_In_TableViewController: UITableViewController {
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        //self.view.backgroundColor = UIColor.clearColor()
+        
         self.navigationItem.title = "Welcome!"
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
     override func didReceiveMemoryWarning() {
@@ -83,28 +78,22 @@ class Sign_In_TableViewController: UITableViewController {
 
                     }else{
                         for record in records!{
-                            
                             if(record.objectForKey("password") as! String == self.passwordField.text! && record.objectForKey("username") as! String == self.usernameField.text!){
-                                
-                                
                                 dispatch_sync(dispatch_get_main_queue(), {
                                     
                                     appDel.providerRecord = record
-                                    print(appDel.providerRecord)
+                                    print(appDel.providerRecord!)
                                     self.performSegueWithIdentifier("signInProvider", sender: self)
                                 })
-                                
-                                
                                 return
                             }
-                            
                         }
                         dispatch_sync(dispatch_get_main_queue(), {
                             let alertController = UIAlertController(title: "Incorrect Username or Password", message: "The username or password you have entered is incorrect", preferredStyle: .Alert)
                             alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                             self.presentViewController(alertController, animated: true, completion: nil)
                         })
-                        //print("Incorrect Password")
+                        
 
                     }
                 })
@@ -128,20 +117,14 @@ class Sign_In_TableViewController: UITableViewController {
                 }else{
                     for record in records!{
                         if(record.objectForKey("password") as! String == self.passwordField.text! && record.objectForKey("username") as! String == self.usernameField.text!){
-                            
-                           
-                            
                             dispatch_sync(dispatch_get_main_queue(), {
                                 
                                 appDel.clientRecord = record
                                 print(appDel.clientRecord)
                                 self.performSegueWithIdentifier("signInClient", sender: self)
                             })
-                            
-                            
                             return
                         }
-                        
                     }
                     dispatch_sync(dispatch_get_main_queue(), {
                         let alertController = UIAlertController(title: "Incorrect Username or Password", message: "The username or password you have entered is incorrect", preferredStyle: .Alert)
